@@ -10,6 +10,7 @@ import camiseta3 from '../assets/camisetas/3.png'
 import { stripe } from "@/lib/stripe";
 import { GetStaticProps } from "next";
 import Stripe from "stripe";
+import Link from "next/link";
 
 interface HomeProps {
   products: {
@@ -32,14 +33,18 @@ export default function Home({ products }: HomeProps) {
     <HomeContainer ref={sliderRef} className='keen-slider'>
       {products.map(product => {
         return (
-          <Product key={product.id} className="keen-slider__slide">
-            <Image src={product.imageUrl} width={520} height={480} alt='' />
+          <Link key={product.id} href={'/product/${product.id}'}  >
+            <Product
+              className="keen-slider__slide">
+              <Image src={product.imageUrl} width={520} height={480} alt='' />
 
-            <footer>
-              <strong>{product.name}</strong>
-              <span>{product.price}</span>
-            </footer>
-          </Product>
+              <footer>
+                <strong>{product.name}</strong>
+                <span>{product.price}</span>
+              </footer>
+            </Product>
+          </Link>
+
         )
       })}
     </HomeContainer>
@@ -68,6 +73,6 @@ export const getStaticProps: GetStaticProps = async () => {
     props: {
       products
     },
-    revalidate: 60 * 60 * 2 
+    revalidate: 60 * 60 * 2
   }
 }

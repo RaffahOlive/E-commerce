@@ -12,6 +12,7 @@ interface ProductProps {
         imageUrl: string
         price: string
         description: string
+        defaultPriceId: string
     }
 }                   
 
@@ -43,13 +44,13 @@ export default function Product({ product }: ProductProps) {
 export const getStaticPaths: GetStaticPaths = async () => {
     return {
         paths: [
-            {params: {id:'7D'}}
+            {params: {id:'prod_Naj2PjTjoVQsoO'}}
         ],
         fallback: true,
     }
 }
 
-export const getStaticProps: GetStaticProps<any, {id: string}> = async ({ params }: any) => {
+export const getStaticProps: GetStaticProps<any, {id: string}> = async ({ params }) => {
     const productId = params.id;
 
     const product = await stripe.products.retrieve(productId, {
@@ -68,6 +69,7 @@ export const getStaticProps: GetStaticProps<any, {id: string}> = async ({ params
                     currency: 'BRL'
                 }).format(price.unit_amount! / 100),
                 description: product.description,
+                defaultPriceId: price.id,
             }
         },
         revalidate: 60 * 60 * 1,

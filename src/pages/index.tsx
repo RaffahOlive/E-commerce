@@ -1,15 +1,15 @@
-import { HomeContainer, Product } from "@/styles/pages/home";
-import Image from "next/image";
+import { GetStaticProps } from "next";
+import Head from "next/head";
+
+import { stripe } from "@/lib/stripe";
+import Stripe from "stripe";
 
 import { useKeenSlider } from 'keen-slider/react'
 import 'keen-slider/keen-slider.min.css';
 
-import camiseta1 from '../assets/camisetas/1.png'
-import camiseta2 from '../assets/camisetas/2.png'
-import camiseta3 from '../assets/camisetas/3.png'
-import { stripe } from "@/lib/stripe";
-import { GetStaticProps } from "next";
-import Stripe from "stripe";
+import Image from "next/image";
+import { HomeContainer, Product } from "@/styles/pages/home";
+
 import Link from "next/link";
 
 interface HomeProps {
@@ -17,7 +17,7 @@ interface HomeProps {
     id: string
     name: string
     imageUrl: string
-    price: string                                                                                                                                                                             
+    price: string
   }[]
 }
 
@@ -30,24 +30,29 @@ export default function Home({ products }: HomeProps) {
   })
 
   return (
-    <HomeContainer ref={sliderRef} className='keen-slider'>
-      {products.map(product => {
-        return (
-          <Link href={`/product/${product.id}`} key={product.id} prefetch={false}>
-            <Product
-              className="keen-slider__slide">
-              <Image src={product.imageUrl} width={520} height={480} alt='' />
+    <>
+      <Head>
+        <title>Home | E-Commerce</title>
+      </Head>
 
-              <footer>
-                <strong>{product.name}</strong>
-                <span>{product.price}</span>
-              </footer>
-            </Product>
-          </Link>
+      <HomeContainer ref={sliderRef} className='keen-slider'>
+        {products.map(product => {
+          return (
+            <Link href={`/product/${product.id}`} key={product.id} prefetch={false}>
+              <Product
+                className="keen-slider__slide">
+                <Image src={product.imageUrl} width={520} height={480} alt='' />
 
-        )
-      })}
-    </HomeContainer>
+                <footer>
+                  <strong>{product.name}</strong>
+                  <span>{product.price}</span>
+                </footer>
+              </Product>
+            </Link>
+          )
+        })}
+      </HomeContainer>
+    </>
   )
 }
 

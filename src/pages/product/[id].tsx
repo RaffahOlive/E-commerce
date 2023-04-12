@@ -2,6 +2,7 @@ import { stripe } from "@/lib/stripe"
 import { ImageContainer, ProductContainer, ProductDetails } from "@/styles/pages/product"
 import axios from "axios"
 import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next"
+import Head from "next/head"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import Stripe from "stripe"
@@ -15,12 +16,12 @@ interface ProductProps {
         description: string
         defaultPriceId: string
     }
-}                   
+}
 
 export default function Product({ product }: ProductProps) {
     async function handleBuyProduct() {
         try {
-            const response = await axios.post('/api/checkout',{
+            const response = await axios.post('/api/checkout', {
                 priceId: product.defaultPriceId,
             })
 
@@ -36,38 +37,46 @@ export default function Product({ product }: ProductProps) {
 
     const { isFallback } = useRouter()
 
-    if (isFallback) {                                                                                                                                                                                                                                                                                                                                                                                   
+    if (isFallback) {
         return <p>Loading...</p>
     }
-    return (                                                                                                                                                                                                                        
-        <ProductContainer>
-            <ImageContainer>
-                <Image src={product.imageUrl} width={520} height={480} alt='' />
-            </ImageContainer>
+    return (
+        <>
+            <Head>
+                <title>{product.name} | E-Commerce</title>
+            </Head>
 
-            <ProductDetails>
-                <h1>{product.name}</h1>
-                <span>{product.price}</span>
-                <p>{product.description}</p>
+            <ProductContainer>
+                <ImageContainer>
+                    <Image src={product.imageUrl} width={520} height={480} alt='' />
+                </ImageContainer>
 
-                <button onClick={handleBuyProduct}>                                                                                                                                         
-                    Comprar agora
-                </button>
-            </ProductDetails>
-        </ProductContainer>
+                <ProductDetails>
+                    <h1>{product.name}</h1>
+                    <span>{product.price}</span>
+                    <p>{product.description}</p>
+
+                    <button onClick={handleBuyProduct}>
+                        Comprar agora
+                    </button>
+                </ProductDetails>
+            </ProductContainer>
+
+        </>
+
     )
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
     return {
         paths: [
-            {params: {id:'prod_Naj2PjTjoVQsoO'}}
+            { params: { id: 'prod_Naj2PjTjoVQsoO' } }
         ],
         fallback: true,
     }
 }
 
-export const getStaticProps: GetStaticProps<any, {id: string}> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<any, { id: string }> = async ({ params }) => {
     const productId = params.id;
 
     const product = await stripe.products.retrieve(productId, {
